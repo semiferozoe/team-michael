@@ -7,13 +7,13 @@ from memory_profiler import profile
 from guppy import hpy
 h = hpy()
 
-#Pop size is the number of schedules created per generation
+# Population size is the number of schedules created per generation
 POPULATION_SIZE = 9
-#Code stops when this number of schedules have 0 conflicts
+# This variable will determine how many parents are left and used for the crossovers
 NUMB_OF_ELITE_SCHEDULES = 1
-#How many schedules will be taken from the current generation and put into the next
+# How many schedules will be taken from the current generation and put into the next
 TOURNAMENT_SELECTION_SIZE = 3
-#Controls the amount of mutation allowed during a generation mutation
+# Compared to randomly generated numbers to determine mutations later on
 MUTATION_RATE = 0.1
 class Data:
     ##################################################
@@ -44,6 +44,7 @@ class Data:
         course6 = Course("C6", "101", [self._instructors[0], self._instructors[2]], 45)
         course7 = Course("C7", "654", [self._instructors[1], self._instructors[3]], 45)
         self._courses = [course1, course2, course3, course4, course5, course6, course7]
+        # this is where you set what course number goes to which department
         dept1 = Department("CSC", [course1, course3])
         dept2 = Department("MATH", [course2, course4, course5])
         dept3 = Department("ENGR", [course6, course7])
@@ -51,12 +52,14 @@ class Data:
         self._numberOfClasses = 0
         for i in range(0, len(self._depts)):
             self._numberOfClasses += len(self._depts[i].get_courses())
+    # call your get functions into your __init__ finction
     def get_rooms(self): return self._rooms
     def get_instructors(self): return self._instructors
     def get_courses(self): return self._courses
     def get_depts(self): return self._depts
     def get_meetingTimes(self): return self._meetingTimes
     def get_numberOfClasses(self): return self._numberOfClasses
+# class for the scheduling section of the output. Setup for the fitness and conflict columns of your table
 class Schedule:
     def __init__(self):
         self._data = data
@@ -74,6 +77,7 @@ class Schedule:
             self._fitness = self.calculate_fitness()
             self._isFitnessChanged = False
         return self._fitness
+    # this initializer set your courses and all other informtion into the scheduler section of your output
     def initialize(self):
         depts = self._data.get_depts()
         for i in range(0, len(depts)):
@@ -86,6 +90,7 @@ class Schedule:
                 newClass.set_instructor(courses[j].get_instructors()[rnd.randrange(0, len(courses[j].get_instructors()))])
                 self._classes.append(newClass)
         return self
+    # calculates the ratio of conflicts in each current schedule. Lower ratio/fitness means more conflicts
     def calculate_fitness(self):
         self._numbOfConflicts = 0
         classes = self.get_classes()
@@ -99,12 +104,14 @@ class Schedule:
                         if (classes[i].get_room() == classes[j].get_room()): self._numbOfConflicts += 1
                         if (classes[i].get_instructor() == classes[j].get_instructor()): self._numbOfConflicts += 1
         return 1 / ((1.0*self._numbOfConflicts + 1))
+    # string function that edits the layout of the output for the schedule section
     def __str__(self):
         returnValue = ""
         for i in range(0, len(self._classes)-1):
             returnValue += str(self._classes[i]) + ", "
         returnValue += str(self._classes[len(self._classes)-1])
         return returnValue
+# this class is what populates the tables with the population size you enter at the top of the code.
 class Population:
     def __init__(self, size):
         self._size = size
@@ -112,8 +119,12 @@ class Population:
         self._schedules = []
         for i in range(0, size): self._schedules.append(Schedule().initialize())
     def get_schedules(self): return self._schedules
+# Main Genetic Agorithm used to create generations and eventually find the Elite_Schedule and stop once the desire amount is found
 class Algorithm:
+    # evolve function brings in the crossover population and mutates it
     def evolve(self, population): return self._mutate_population(self._crossover_population(population))
+    # The corssover population function is what appends the the schedules that won the tournament of the current generation. 
+    # ie. The current top Schedules with the least amount of conflicts/the highest fitness ratio
     def _crossover_population(self, pop):
         crossover_pop = Population(0)
         for i in range(NUMB_OF_ELITE_SCHEDULES):
@@ -125,21 +136,28 @@ class Algorithm:
             crossover_pop.get_schedules().append(self._crossover_schedule(schedule1, schedule2))
             i += 1
         return crossover_pop
+    # This brings in the current pop into the mutate schedule function the returns what is recieved
     def _mutate_population(self, population):
         for i in range(NUMB_OF_ELITE_SCHEDULES, POPULATION_SIZE):
             self._mutate_schedule(population.get_schedules()[i])
         return population
+    # Create two random crossover points in the parent and copy the segment between them from the 
+    # first parent to the first offspring. Now, starting from the second crossover point in the second 
+    # parent, copy the remaining unused numbers from the second parent to the first child, wrapping around the list
     def _crossover_schedule(self, schedule1, schedule2):
         crossoverSchedule = Schedule().initialize()
         for i in range(0, len(crossoverSchedule.get_classes())):
             if (rnd.random() > 0.5): crossoverSchedule.get_classes()[i] = schedule1.get_classes()[i]
             else: crossoverSchedule.get_classes()[i] = schedule2.get_classes()[i]
         return crossoverSchedule
+    # for each class in a schedule, if the random number created it smaller than the set mutation rate then than 
+    # class will be mutated and returned for the next generation
     def _mutate_schedule(self, mutateSchedule):
         schedule = Schedule().initialize()
         for i in range(0, len(mutateSchedule.get_classes())):
             if(MUTATION_RATE > rnd.random()): mutateSchedule.get_classes()[i] = schedule.get_classes()[i]
         return mutateSchedule
+    # This is where the schedules are chosen for the tournament of each generation
     def _select_tournament_population(self, pop):
         tournament_pop = Population(0)
         i = 0
@@ -148,6 +166,7 @@ class Algorithm:
             i += 1
         tournament_pop.get_schedules().sort(key=lambda x: x.get_fitness(), reverse=True)
         return tournament_pop
+# Course class that gets the information needed for each course
 class Course:
     def __init__(self, number, name, instructors, maxNumbOfStudents):
         self._number = number
@@ -159,6 +178,7 @@ class Course:
     def get_instructors(self): return self._instructors
     def get_maxNumbOfStudents(self): return self._maxNumbOfStudents
     def __str__(self): return self._name
+# Instructor class that gets the information of each instrutor
 class Instructor:
     def __init__(self, id, name):
         self._id = id
@@ -166,24 +186,31 @@ class Instructor:
     def get_id(self): return self._id
     def get_name(self): return self._name
     def __str__(self): return self._name
+# Room class that gets the information of each Room
 class Room:
     def __init__(self, number, seatingCapacity):
         self._number = number
         self._seatingCapacity = seatingCapacity
     def get_number(self): return self._number
     def get_seatingCapacity(self): return self._seatingCapacity
+# Meeting time class that gets the information of each Meeting time
 class MeetingTime:
     def __init__(self, id, time):
         self._id = id
         self._time = time
     def get_id(self): return self._id
     def get_time(self): return self._time
+# Department class that gets the information of each Department
 class Department:
     def __init__(self, name, courses):
         self._name = name
         self._courses = courses
     def get_name(self): return self._name
     def get_courses(self): return self._courses
+# Class class that gets the information of each Class
+# **Note that a Class is different from a course in the sense that a class is the course along with
+# the department it belongs to and all other information that comes along with that class.
+# A class is the finalized item for the schedule
 class Class:
     def __init__(self, id, dept, course):
         self._id = id
@@ -204,6 +231,9 @@ class Class:
     def __str__(self):
         return str(self._dept.get_name()) + "," + str(self._course.get_number()) + "," + \
             str(self._room.get_number()) + "," + str(self._instructor.get_id()) + "," + str(self._meetingTime.get_id())
+# This function is how everything is being printed and  implemented into prettyTable using the python prettyTable library.
+# This function was implemented using a previously created online source and only slightly adjusted to meet th requirments needed 
+# for this source code.
 class DisplayMgr:
     def print_available_data(self):
         print("> All Available Data")
@@ -270,16 +300,22 @@ class DisplayMgr:
                         classes[i].get_instructor().get_name() +" (" + str(classes[i].get_instructor().get_id()) +")",
                         classes[i].get_meetingTime().get_time() +" (" + str(classes[i].get_meetingTime().get_id()) +")"])
         print(table)
+# Runs the code for each generation
 data = Data()
 displayMgr = DisplayMgr()
 displayMgr.print_available_data()
+# start at generation 0
 generationNumber = 0
 print("\n> Generation # "+str(generationNumber))
+# populate the table
 population = Population(POPULATION_SIZE)
 population.get_schedules().sort(key=lambda x: x.get_fitness(), reverse=True)
+# display current generation
 displayMgr.print_generation(population)
 displayMgr.print_schedule_as_table(population.get_schedules()[0])
+# run algorithm to adjust and mutate current generation for next generation
 algorithm = Algorithm()
+#adjust and continues above code util a schedule with 0 conflicts/fitnes of 1.0 is found
 while (population.get_schedules()[0].get_fitness() != 1.0):
     generationNumber += 1
     print("\n> Generation # " + str(generationNumber))
@@ -289,4 +325,5 @@ while (population.get_schedules()[0].get_fitness() != 1.0):
     displayMgr.print_schedule_as_table(population.get_schedules()[0])
 print("\n\n")
 
+# used for profiling
 h.heap()
