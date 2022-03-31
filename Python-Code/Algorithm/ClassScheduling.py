@@ -1,6 +1,6 @@
 import prettytable as prettytable
 import random as rnd
-#profiling
+# profiling
 import numpy as np
 import time
 from memory_profiler import profile
