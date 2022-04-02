@@ -1,5 +1,7 @@
 import prettytable as prettytable
 import random as rnd
+import sqlite3 as sqlite
+from enum import Enum
 # profiling
 import numpy as np
 import time
@@ -15,6 +17,29 @@ NUMB_OF_ELITE_SCHEDULES = 1
 TOURNAMENT_SELECTION_SIZE = 3
 # Compared to randomly generated numbers to determine mutations later on
 MUTATION_RATE = 0.1
+class Data_Base:
+    def __init__(self):
+        # estabish connection to created sql database
+        self.conn = sqlite.connect('class_schedule.db')
+        # set a variable to be your cursor to process executable commands
+        self.curs = self.conn.cursor()
+    def select_rooms(self):
+        # select all data from the room table
+        self.curs.execute("SELECT * FROM room")
+        rooms = self.curs.fetchall()
+        # this will be the list of rooms that is returned from the table
+        returnRooms = []
+        for i in range(0,len(rooms)):
+            returnRooms.append(Room(rooms[i][0], rooms[i][1]))
+        return returnRooms
+    def select_times(self):
+        self.curs.execute("SELECT * FROM meeting_time")
+        meetingTimes = self.curs.fetchall()
+        returnMeetingTimes = []
+        for i in range(0, len(meetingTimes)):
+            returnMeetingTimes.append(MeetingTime(meetingTimes[i][0], meetingTimes[i][1]))
+        return returnMeetingTimes
+"""
 class Data:
     ##################################################
     ## Information given, convert into sql database ##
@@ -59,6 +84,7 @@ class Data:
     def get_depts(self): return self._depts
     def get_meetingTimes(self): return self._meetingTimes
     def get_numberOfClasses(self): return self._numberOfClasses
+"""
 # class for the scheduling section of the output. Setup for the fitness and conflict columns of your table
 class Schedule:
     def __init__(self):
