@@ -118,15 +118,15 @@ class Schedule:
     def __init__(self):
         self._data = db
         self._classes = []
-        self._numbOfConflicts = 0
+        self._conflicts = 0
         self._fitness = -1
         self._classNumb = 0
         self._isFitnessChanged = True
     def get_classes(self):
         self._isFitnessChanged = True
         return self._classes
-    def get_numbOfConflicts(self):
-         return self._numbOfConflicts
+    def get_conflicts(self):
+         return self._conflicts
     def get_fitness(self):
         if (self._isFitnessChanged == True):
             self._fitness = self.calculate_fitness()
@@ -440,10 +440,12 @@ class DisplayMgr:
         for i in range(0, len(conflicts)):
             conflictsTable.add_row([str(conflicts[i].get_conflictType()),
                                     str("  and  ".join(map(str, conflicts[i].get_conflictBetweenClasses())))])
-        if (len(conflicts) > 0): print(conflictsTable)
+        if (len(conflicts) > 0): 
+            print(conflictsTable)
 def find_fittest_schedule(verboseFlag):
     generationNumber = 0
-    if (verboseFlag): print("> Generation # "+str(generationNumber))
+    if (verboseFlag): 
+        print("> Generation # " + str(generationNumber))
     population = Population(POPULATION_SIZE)
     population.get_schedules().sort(key=lambda x: x.get_fitness(), reverse=True)
     if (verboseFlag):
@@ -453,7 +455,8 @@ def find_fittest_schedule(verboseFlag):
     algorithm = Algorithm()
     while (population.get_schedules()[0].get_fitness() != 1.0):
         generationNumber += 1
-        if (verboseFlag): print("\n> Generation # " + str(generationNumber))
+        if (verboseFlag): 
+            print("\n> Generation # " + str(generationNumber))
         population = algorithm.evolve(population)
         population.get_schedules().sort(key=lambda x: x.get_fitness(), reverse=True)
         if (verboseFlag):
@@ -465,23 +468,31 @@ def find_fittest_schedule(verboseFlag):
 def handle_command_line(verboseFlag):
     while (True):
         entry = input("> What do you want to do (i:nitial data display, f:ind fittest schedule, d:efault mode, v:erbose mode, e:xit)\n")
-        if (entry == "i"): DisplayMgr.display_input_data()
+        if (entry == "i"): 
+            DisplayMgr.display_input_data()
         elif (entry == "f"):
             schedule = find_fittest_schedule(verboseFlag)
             handle_schedule_display(schedule)
-        elif (entry == "d"): verboseFlag = False
-        elif (entry == "v"): verboseFlag = True
-        elif (entry == "e"): break
+        elif (entry == "d"): 
+            verboseFlag = False
+        elif (entry == "v"): 
+            verboseFlag = True
+        elif (entry == "e"):
+            break
 def handle_schedule_display(schedule):
     while (True):
         entry = input("> What do you want to display (c:lass schedule, t:ime schedule, r:oom schedule, i:nstructor schedule, e:lse)\n")
         if (entry == "c"):
             print("> from 'class' perspective")
             DisplayMgr.display_schedule_as_table(schedule)
-        elif (entry == "t"): DisplayMgr.display_schedule_meetingTimes(schedule)
-        elif (entry == "r"): DisplayMgr.display_schedule_rooms(schedule);
-        elif (entry == "i"): DisplayMgr.display_schedule_instructors(schedule);
-        elif (entry == "e"): break
+        elif (entry == "t"): 
+            DisplayMgr.display_schedule_meetingTimes(schedule)
+        elif (entry == "r"): 
+            DisplayMgr.display_schedule_rooms(schedule)
+        elif (entry == "i"): 
+            DisplayMgr.display_schedule_instructors(schedule)
+        elif (entry == "e"): 
+            break
 db = Data_Base()
 handle_command_line(VERBOSE_FLAG)
 # used for profiling
