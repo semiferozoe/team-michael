@@ -18,14 +18,16 @@ NUMB_OF_ELITE_SCHEDULES = 1
 TOURNAMENT_SELECTION_SIZE = 3
 # Compared to randomly generated numbers to determine mutations later on
 MUTATION_RATE = 0.1
+# Verbose sections are strictly to display original code's additional information about generations discovered
 VERBOSE_FLAG = False
+# replaces Data class from original code
 class Data_Base:
     def __init__(self):
         # estabish connection to created sql database
         self._conn = sqlite.connect('class_schedule.db')
         # set a variable to be your cursor to process executable commands
         self._curs = self._conn.cursor()
-
+        # setting self variables to the select unctions below
         self._rooms = self.select_rooms()
         self._meetingTimes = self.select_times()
         self._instructors = self.select_instructor()
@@ -35,6 +37,7 @@ class Data_Base:
         for i in range(0, len(self._depts)):
             self._numberofClasses += len(self._depts[i].get_courses())
     ##################################################################################
+    # all functions below are to select data from the used database
     def select_rooms(self):
         # select all data from the room table
         self._curs.execute("SELECT * FROM room")
@@ -105,14 +108,19 @@ class Data_Base:
         for i in range(0, len(self._courses)):
            if self._courses[i].get_number() in courseNumbers:
                returnValue.append(self._courses[i])
-        return returnValue
-    
-    def get_rooms(self): return self._rooms
-    def get_instructors(self): return self._instructors
-    def get_courses(self): return self._courses
-    def get_depts(self): return self._depts
-    def get_meetingTimes(self): return self._meetingTimes
-    def get_numberofClasses(self): return self._numberofClasses        
+        return returnValue   
+    def get_rooms(self): 
+        return self._rooms
+    def get_instructors(self):
+         return self._instructors
+    def get_courses(self):
+         return self._courses
+    def get_depts(self): 
+        return self._depts
+    def get_meetingTimes(self): 
+        return self._meetingTimes
+    def get_numberofClasses(self): 
+        return self._numberofClasses        
 # class for the scheduling section of the output. Setup for the fitness and conflict columns of your table
 class Schedule:
     def __init__(self):
@@ -186,8 +194,10 @@ class Population:
         self._size = size
         self._data = db
         self._schedules = []
-        for i in range(0, size): self._schedules.append(Schedule().initialize())
-    def get_schedules(self): return self._schedules
+        for i in range(0, size): 
+            self._schedules.append(Schedule().initialize())
+    def get_schedules(self): 
+        return self._schedules
 # Main Genetic Agorithm used to create generations and eventually find a schedule with no and stop once the desire amount is found
 class Algorithm:
     # evolve function brings in the crossover population and mutates it
@@ -242,42 +252,57 @@ class Course:
         self._name = name
         self._maxNumbOfStudents = maxNumbOfStudents
         self._instructors = instructors
-    def get_number(self): return self._number
-    def get_name(self): return self._name
-    def get_instructors(self): return self._instructors
-    def get_maxNumbOfStudents(self): return self._maxNumbOfStudents
-    def __str__(self): return self._name
+    def get_number(self): 
+        return self._number
+    def get_name(self): 
+        return self._name
+    def get_instructors(self): 
+        return self._instructors
+    def get_maxNumbOfStudents(self):
+         return self._maxNumbOfStudents
+    def __str__(self): 
+        return self._name
 # Instructor class that gets the information of each instrutor
 class Instructor:
     def __init__(self, id, name, availability):
         self._id = id
         self._name = name
         self._availability = availability
-    def get_id(self): return self._id
-    def get_name(self): return self._name
-    def get_availability(self): return self._availability
-    def __str__(self): return self._name
+    def get_id(self): 
+        return self._id
+    def get_name(self): 
+        return self._name
+    def get_availability(self): 
+        return self._availability
+    def __str__(self): 
+        return self._name
 # Room class that gets the information of each Room
 class Room:
     def __init__(self, number, seatingCapacity):
         self._number = number
         self._seatingCapacity = seatingCapacity
-    def get_number(self): return self._number
-    def get_seatingCapacity(self): return self._seatingCapacity
+    def get_number(self): 
+        return self._number
+    def get_seatingCapacity(self): 
+        return self._seatingCapacity
 # Meeting time class that gets the information of each Meeting time
 class MeetingTime:
     def __init__(self, id, time):
         self._id = id
         self._time = time
-    def get_id(self): return self._id
-    def get_time(self): return self._time
+    def get_id(self): 
+        return self._id
+    def get_time(self): 
+        return self._time
 # Department class that gets the information of each Department
 class Department:
     def __init__(self, name, courses):
         self._name = name
         self._courses = courses
-    def get_name(self): return self._name
-    def get_courses(self): return self._courses
+    def get_name(self): 
+        return self._name
+    def get_courses(self): 
+        return self._courses
 # Class class that gets the information of each Class
 # **Note that a Class is different from a course in the sense that a class is the course along with
 # the department it belongs to and all other information that comes along with that class.
@@ -290,18 +315,28 @@ class Class:
         self._instructor = None
         self._meetingTime = None
         self._room = None
-    def get_id(self): return self._id
-    def get_dept(self): return self._dept
-    def get_course(self): return self._course
-    def get_instructor(self): return self._instructor
-    def get_meetingTime(self): return self._meetingTime
-    def get_room(self): return self._room
-    def set_instructor(self, instructor): self._instructor = instructor
-    def set_meetingTime(self, meetingTime): self._meetingTime = meetingTime
-    def set_room(self, room): self._room = room
+    def get_id(self): 
+        return self._id
+    def get_dept(self): 
+        return self._dept
+    def get_course(self): 
+        return self._course
+    def get_instructor(self): 
+        return self._instructor
+    def get_meetingTime(self): 
+        return self._meetingTime
+    def get_room(self): 
+        return self._room
+    def set_instructor(self, instructor): 
+        self._instructor = instructor
+    def set_meetingTime(self, meetingTime):
+         self._meetingTime = meetingTime
+    def set_room(self, room): 
+        self._room = room
     def __str__(self):
         return str(self._dept.get_name()) + "," + str(self._course.get_number()) + "," + \
             str(self._room.get_number()) + "," + str(self._instructor.get_id()) + "," + str(self._meetingTime.get_id())
+# Class that collects conflicts found in class meting times, instructors' availabilities, and class sizes
 class Conflict:
     class ConflictType(Enum):
         INSTRUCTOR_BOOKING = 1
@@ -311,12 +346,17 @@ class Conflict:
     def __init__(self, conflictType, conflictBetweenClasses):
         self._conflictType = conflictType
         self._conflictBetweenClasses = conflictBetweenClasses
-    def get_conflictType(self): return self._conflictType
-    def get_conflictBetweenClasses(self): return self._conflictBetweenClasses
-    def __str__(self): return str(self._conflictType)+" "+str(" and ".join(map(str, self._conflictBetweenClasses)))
+    def get_conflictType(self): 
+        return self._conflictType
+    def get_conflictBetweenClasses(self):
+         return self._conflictBetweenClasses
+    def __str__(self):
+         return str(self._conflictType)+" "+str(" and ".join(map(str, self._conflictBetweenClasses)))
 # This function is how everything is being printed and  implemented into prettyTable using the python prettyTable library.
 # This function was implemented using a previously created online source and only slightly adjusted to meet th requirments needed 
 # for this source code.
+
+# Static methods are used in the class below to set callable objects for the last function so the total amount of conflicts can be foud and displayed
 class DisplayMgr:
     @staticmethod
     def display_input_data():
@@ -442,6 +482,8 @@ class DisplayMgr:
                                     str("  and  ".join(map(str, conflicts[i].get_conflictBetweenClasses())))])
         if (len(conflicts) > 0): 
             print(conflictsTable)
+# checks if Verbose mode is active and if so show all generations ran through, otherwise just run through generations and move onto the 
+# next command line with the final schedule ready.
 def find_fittest_schedule(verboseFlag):
     generationNumber = 0
     if (verboseFlag): 
@@ -465,6 +507,7 @@ def find_fittest_schedule(verboseFlag):
             DisplayMgr.display_schedule_conflicts(population.get_schedules()[0])
     print("> solution found after " + str(generationNumber) + " generations")
     return population.get_schedules()[0]
+# first command line used to decide what mode and information you want to find.
 def handle_command_line(verboseFlag):
     while (True):
         entry = input("> What do you want to do (i:nitial data display, f:ind fittest schedule, d:efault mode, v:erbose mode, e:xit)\n")
@@ -479,6 +522,7 @@ def handle_command_line(verboseFlag):
             verboseFlag = True
         elif (entry == "e"):
             break
+# displa command line used once fittest schedule is found
 def handle_schedule_display(schedule):
     while (True):
         entry = input("> What do you want to display (c:lass schedule, t:ime schedule, r:oom schedule, i:nstructor schedule, e:lse)\n")
