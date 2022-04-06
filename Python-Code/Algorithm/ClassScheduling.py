@@ -1,3 +1,4 @@
+from re import I
 import prettytable as prettytable
 import random as rnd
 import sqlite3 as sqlite
@@ -17,6 +18,7 @@ NUMB_OF_ELITE_SCHEDULES = 1
 TOURNAMENT_SELECTION_SIZE = 3
 # Compared to randomly generated numbers to determine mutations later on
 MUTATION_RATE = 0.1
+VERBOSE_FLAG = False
 class Data_Base:
     def __init__(self):
         # estabish connection to created sql database
@@ -54,7 +56,7 @@ class Data_Base:
         instructors = self._curs.fetchall()
         returnInstructors = []
         for i in range(0, len(instructors)):
-            returnInstructors.append(Instructor(instructors[i][0], instructors[i][1]))
+            returnInstructors.append(Instructor(instructors[i][0], instructors[i][1], self.select_availability(instructors[i][0])))
         return returnInstructors
     def select_availability(self, instructor):
         self._curs.execute("SELECT * FROM instructor_availability where instructor_id = '" + instructor + "'")
@@ -66,23 +68,23 @@ class Data_Base:
         for i in range(0, len(self._meetingTimes)):
             if self._meetingTimes[i].get_id() in instructorTR:
                 returnAvailability.append(self._meetingTimes[i])
-            return returnAvailability
-    def _select_courses(self):
+        return returnAvailability
+    def select_courses(self):
         self._curs.execute("SELECT * FROM course")
         courses = self._curs.fetchall()
         returnCourses = []
         for i in range(0, len(courses)):
             returnCourses.append(
-                Course(courses[i][0], courses[i][1], self._select_course_instructors(courses[i][0]), courses[i][2]))
+                Course(courses[i][0], courses[i][1], self.select_course_instructors(courses[i][0]), courses[i][2]))
         return returnCourses
-    def _select_depts(self):
+    def select_depts(self):
         self._curs.execute("SELECT * FROM dept")
         depts = self._curs.fetchall()
         returnDepts = []
         for i in range(0, len(depts)):
-            returnDepts.append(Department(depts[i][0], self._select_dept_courses(depts[i][0])))
+            returnDepts.append(Department(depts[i][0], self.select_dept_courses(depts[i][0])))
         return returnDepts
-    def _select_course_instructors(self, courseNumber):
+    def select_course_instructors(self, courseNumber):
         self._curs.execute("SELECT * FROM course_instructor where course_number == '" + courseNumber + "'")
         dbInstructorNumbers = self._curs.fetchall()
         instructorNumbers = []
@@ -93,7 +95,7 @@ class Data_Base:
            if  self._instructors[i].get_id() in instructorNumbers:
                returnValue.append(self._instructors[i])
         return returnValue
-    def _select_dept_courses(self, deptName):
+    def select_dept_courses(self, deptName):
         self._curs.execute("SELECT * FROM dept_course where name == '" + deptName + "'")
         dbCourseNumbers = self._curs.fetchall()
         courseNumbers = []
@@ -110,58 +112,11 @@ class Data_Base:
     def get_courses(self): return self._courses
     def get_depts(self): return self._depts
     def get_meetingTimes(self): return self._meetingTimes
-    def get_numberofClasses(self): return self._numberofClasses
-        
-"""
-class Data:
-    ##################################################
-    ## Information given, convert into sql database ##
-    ##################################################
-    ROOMS = [["R1",25], ["R2",45], ["R3",35]]
-    MEETING_TIMES = [["MT1", "MWF 8:00 - 9:15"],
-                    ["MT2", "MWF 10:00 - 11:15"],
-                    ["MT3", "TTR 09:00 - 10:30"],
-                    ["MT4", "TTR 10:30 - 12:00"]]
-    INSTRUCTORS = [["I1", "Kyle Prather"],
-                ["I2", "John Cena"],
-                ["I3", "Cotton EyeJoe"],
-                ["I4", "The Rock"]]
-    def __init__(self):
-        self._rooms = []; self._meetingTimes = []; self._instructors = []
-        for i in range(0, len(self.ROOMS)):
-            self._rooms.append(Room(self.ROOMS[i][0], self.ROOMS[i][1]))
-        for i in range(0, len(self.MEETING_TIMES)):
-            self._meetingTimes.append(MeetingTime(self.MEETING_TIMES[i][0], self.MEETING_TIMES[i][1]))
-        for i in range(0, len(self.INSTRUCTORS)):
-            self._instructors.append(Instructor(self.INSTRUCTORS[i][0], self.INSTRUCTORS[i][1]))
-        course1 = Course("C1", "330", [self._instructors[0], self._instructors[1]], 25)
-        course2 = Course("C2", "405", [self._instructors[0], self._instructors[1], self._instructors[2]], 35)
-        course3 = Course("C3", "406", [self._instructors[0], self._instructors[1]], 25)
-        course4 = Course("C4", "450", [self._instructors[2], self._instructors[3]], 30)
-        course5 = Course("C5", "222", [self._instructors[3]], 35)
-        course6 = Course("C6", "101", [self._instructors[0], self._instructors[2]], 45)
-        course7 = Course("C7", "654", [self._instructors[1], self._instructors[3]], 45)
-        self._courses = [course1, course2, course3, course4, course5, course6, course7]
-        # this is where you set what course number goes to which department
-        dept1 = Department("CSC", [course1, course3])
-        dept2 = Department("MATH", [course2, course4, course5])
-        dept3 = Department("ENGR", [course6, course7])
-        self._depts = [dept1, dept2, dept3]
-        self._numberOfClasses = 0
-        for i in range(0, len(self._depts)):
-            self._numberOfClasses += len(self._depts[i].get_courses())
-    # call your get functions into your __init__ finction
-    def get_rooms(self): return self._rooms
-    def get_instructors(self): return self._instructors
-    def get_courses(self): return self._courses
-    def get_depts(self): return self._depts
-    def get_meetingTimes(self): return self._meetingTimes
-    def get_numberOfClasses(self): return self._numberOfClasses
-"""
+    def get_numberofClasses(self): return self._numberofClasses        
 # class for the scheduling section of the output. Setup for the fitness and conflict columns of your table
 class Schedule:
     def __init__(self):
-        self._data = data
+        self._data = db
         self._classes = []
         self._numbOfConflicts = 0
         self._fitness = -1
@@ -170,7 +125,8 @@ class Schedule:
     def get_classes(self):
         self._isFitnessChanged = True
         return self._classes
-    def get_numbOfConflicts(self): return self._numbOfConflicts
+    def get_numbOfConflicts(self):
+         return self._numbOfConflicts
     def get_fitness(self):
         if (self._isFitnessChanged == True):
             self._fitness = self.calculate_fitness()
@@ -184,25 +140,39 @@ class Schedule:
             for j in range(0, len(courses)):
                 newClass = Class(self._classNumb, depts[i], courses[j])
                 self._classNumb += 1
-                newClass.set_meetingTime(data.get_meetingTimes()[rnd.randrange(0, len(data.get_meetingTimes()))])
-                newClass.set_room(data.get_rooms()[rnd.randrange(0, len(data.get_rooms()))])
+                newClass.set_meetingTime(db.get_meetingTimes()[rnd.randrange(0, len(db.get_meetingTimes()))])
+                newClass.set_room(db.get_rooms()[rnd.randrange(0, len(db.get_rooms()))])
                 newClass.set_instructor(courses[j].get_instructors()[rnd.randrange(0, len(courses[j].get_instructors()))])
                 self._classes.append(newClass)
         return self
     # calculates the ratio of conflicts in each current schedule. Lower ratio/fitness means more conflicts
     def calculate_fitness(self):
-        self._numbOfConflicts = 0
-        classes = self.get_classes()
-        for i in range(0, len(classes)):
-            if (classes[i].get_room().get_seatingCapacity() < classes[i].get_course().get_maxNumbOfStudents()):
-                self._numbOfConflicts += 1
-            for j in range(0, len(classes)):
-                if (j >= i):
-                    if (classes[i].get_meetingTime() == classes[j].get_meetingTime() and
-                    classes[i].get_id() != classes[j].get_id()):
-                        if (classes[i].get_room() == classes[j].get_room()): self._numbOfConflicts += 1
-                        if (classes[i].get_instructor() == classes[j].get_instructor()): self._numbOfConflicts += 1
-        return 1 / ((1.0*self._numbOfConflicts + 1))
+       self._conflicts = []
+       classes = self.get_classes()
+       for i in range(0, len(classes)):
+           seatingCapacityConflict = list()
+           seatingCapacityConflict.append(classes[i])
+           if (classes[i].get_room().get_seatingCapacity() < classes[i].get_course().get_maxNumbOfStudents()):
+               self._conflicts.append(Conflict(Conflict.ConflictType.NUMB_OF_STUDENTS, seatingCapacityConflict))
+           if (classes[i].get_meetingTime() not in classes[i].get_instructor().get_availability()):
+               conflictBetweenClasses = list()
+               conflictBetweenClasses.append(classes[i])
+               self._conflicts.append(Conflict(Conflict.ConflictType.INSTRUCTOR_AVAILABILITY, conflictBetweenClasses))
+           for j in range(0, len(classes)):
+               if (j >= i):
+                   if (classes[i].get_meetingTime() == classes[j].get_meetingTime() and
+                   classes[i].get_id() != classes[j].get_id()):
+                       if (classes[i].get_room() == classes[j].get_room()):
+                           roomBookingConflict = list()
+                           roomBookingConflict.append(classes[i])
+                           roomBookingConflict.append(classes[j])
+                           self._conflicts.append(Conflict(Conflict.ConflictType.ROOM_BOOKING, roomBookingConflict))
+                       if (classes[i].get_instructor() == classes[j].get_instructor()):
+                           instructorBookingConflict = list()
+                           instructorBookingConflict.append(classes[i])
+                           instructorBookingConflict.append(classes[j])
+                           self._conflicts.append(Conflict(Conflict.ConflictType.INSTRUCTOR_BOOKING, instructorBookingConflict))
+       return 1 / ((1.0 * len(self._conflicts) + 1))
     # string function that edits the layout of the output for the schedule section
     def __str__(self):
         returnValue = ""
@@ -214,11 +184,11 @@ class Schedule:
 class Population:
     def __init__(self, size):
         self._size = size
-        self._data = data
+        self._data = db
         self._schedules = []
         for i in range(0, size): self._schedules.append(Schedule().initialize())
     def get_schedules(self): return self._schedules
-# Main Genetic Agorithm used to create generations and eventually find the Elite_Schedule and stop once the desire amount is found
+# Main Genetic Agorithm used to create generations and eventually find a schedule with no and stop once the desire amount is found
 class Algorithm:
     # evolve function brings in the crossover population and mutates it
     def evolve(self, population): return self._mutate_population(self._crossover_population(population))
@@ -279,11 +249,13 @@ class Course:
     def __str__(self): return self._name
 # Instructor class that gets the information of each instrutor
 class Instructor:
-    def __init__(self, id, name):
+    def __init__(self, id, name, availability):
         self._id = id
         self._name = name
+        self._availability = availability
     def get_id(self): return self._id
     def get_name(self): return self._name
+    def get_availability(self): return self._availability
     def __str__(self): return self._name
 # Room class that gets the information of each Room
 class Room:
@@ -330,6 +302,18 @@ class Class:
     def __str__(self):
         return str(self._dept.get_name()) + "," + str(self._course.get_number()) + "," + \
             str(self._room.get_number()) + "," + str(self._instructor.get_id()) + "," + str(self._meetingTime.get_id())
+class Conflict:
+    class ConflictType(Enum):
+        INSTRUCTOR_BOOKING = 1
+        ROOM_BOOKING = 2
+        NUMB_OF_STUDENTS = 3
+        INSTRUCTOR_AVAILABILITY = 4
+    def __init__(self, conflictType, conflictBetweenClasses):
+        self._conflictType = conflictType
+        self._conflictBetweenClasses = conflictBetweenClasses
+    def get_conflictType(self): return self._conflictType
+    def get_conflictBetweenClasses(self): return self._conflictBetweenClasses
+    def __str__(self): return str(self._conflictType)+" "+str(" and ".join(map(str, self._conflictBetweenClasses)))
 # This function is how everything is being printed and  implemented into prettyTable using the python prettyTable library.
 # This function was implemented using a previously created online source and only slightly adjusted to meet th requirments needed 
 # for this source code.
@@ -344,7 +328,7 @@ class DisplayMgr:
         DisplayMgr.display_meeting_times()
     @staticmethod
     def display_dept():
-        depts = dbMgr.get_depts()
+        depts = db.get_depts()
         availableDeptsTable = prettytable.PrettyTable(['dept', 'courses'])
         for i in range(0, len(depts)):
             courses = depts.__getitem__(i).get_courses()
@@ -357,7 +341,7 @@ class DisplayMgr:
     @staticmethod
     def display_course():
         availableCoursesTable = prettytable.PrettyTable(['id', 'course #', 'max # of students', 'instructors'])
-        courses = dbMgr.get_courses()
+        courses = db.get_courses()
         for i in range(0, len(courses)):
             instructors = courses[i].get_instructors()
             tempStr = ""
@@ -370,7 +354,7 @@ class DisplayMgr:
     @staticmethod
     def display_instructor():
         availableInstructorsTable = prettytable.PrettyTable(['id', 'instructor', 'availability'])
-        instructors = dbMgr.get_instructors()
+        instructors = db.get_instructors()
         for i in range(0, len(instructors)):
             availability = []
             for j in range(0, len(instructors[i].get_availability())):
@@ -380,14 +364,14 @@ class DisplayMgr:
     @staticmethod
     def display_room():
         availableRoomsTable = prettytable.PrettyTable(['room #', 'max seating capacity'])
-        rooms = dbMgr.get_rooms()
+        rooms = db.get_rooms()
         for i in range(0, len(rooms)):
             availableRoomsTable.add_row([str(rooms[i].get_number()), str(rooms[i].get_seatingCapacity())])
         print(availableRoomsTable)
     @staticmethod
     def display_meeting_times():
         availableMeetingTimeTable = prettytable.PrettyTable(['id', 'Meeting Time'])
-        meetingTimes = dbMgr.get_meetingTimes()
+        meetingTimes = db.get_meetingTimes()
         for i in range(0, len(meetingTimes)):
             availableMeetingTimeTable.add_row([meetingTimes[i].get_id(), meetingTimes[i].get_time()])
         print(availableMeetingTimeTable)
@@ -414,7 +398,7 @@ class DisplayMgr:
     def display_schedule_meetingTimes(schedule):
         print("> from 'meeting time' perspective")
         meetingTimesTable = prettytable.PrettyTable(['id', 'meeting time', 'classes [dept,class,room,instructor,meeting-time] '])
-        meetingTimes = dbMgr.get_meetingTimes()
+        meetingTimes = db.get_meetingTimes()
         for i in range(0, len(meetingTimes)):
             classes = list()
             for j in range(0, len(schedule.get_classes())):
@@ -426,7 +410,7 @@ class DisplayMgr:
     def display_schedule_rooms(schedule):
         print("> from 'room' perspective")
         scheduleRoomsTable = prettytable.PrettyTable(['room','classes [dept,class,room,instructor,meeting-time] '])
-        rooms = dbMgr.get_rooms()
+        rooms = db.get_rooms()
         for i in range(0, len(rooms)):
             roomSchedule = list()
             for j in range(0, len(schedule.get_classes())):
@@ -438,7 +422,7 @@ class DisplayMgr:
     def display_schedule_instructors(schedule):
         print("> from 'instructor' perspective")
         instructorsTable = prettytable.PrettyTable(['id', 'instructor', "classes [dept,class,room,instructor,meeting-time]",'availability'])
-        instructors = dbMgr.get_instructors()
+        instructors = db.get_instructors()
         for i in range(0, len(instructors)):
             availability = []
             for j in range(0, len(instructors[i].get_availability())):
@@ -466,11 +450,11 @@ def find_fittest_schedule(verboseFlag):
         DisplayMgr.display_generation(population)
         DisplayMgr.display_schedule_as_table(population.get_schedules()[0])
         DisplayMgr.display_schedule_conflicts(population.get_schedules()[0])
-    Algorithm = Algorithm()
+    algorithm = Algorithm()
     while (population.get_schedules()[0].get_fitness() != 1.0):
         generationNumber += 1
         if (verboseFlag): print("\n> Generation # " + str(generationNumber))
-        population = Algorithm.evolve(population)
+        population = algorithm.evolve(population)
         population.get_schedules().sort(key=lambda x: x.get_fitness(), reverse=True)
         if (verboseFlag):
             DisplayMgr.display_generation(population)
@@ -498,32 +482,7 @@ def handle_schedule_display(schedule):
         elif (entry == "r"): DisplayMgr.display_schedule_rooms(schedule);
         elif (entry == "i"): DisplayMgr.display_schedule_instructors(schedule);
         elif (entry == "e"): break
-dbMgr = Data_Base()
-"""
-# Runs the code for each generation
-data = Data()
-displayMgr = DisplayMgr()
-displayMgr.print_available_data()
-# start at generation 0
-generationNumber = 0
-print("\n> Generation # "+str(generationNumber))
-# populate the table
-population = Population(POPULATION_SIZE)
-population.get_schedules().sort(key=lambda x: x.get_fitness(), reverse=True)
-# display current generation
-displayMgr.print_generation(population)
-displayMgr.print_schedule_as_table(population.get_schedules()[0])
-# run algorithm to adjust and mutate current generation for next generation
-algorithm = Algorithm()
-#adjust and continues above code util a schedule with 0 conflicts/fitnes of 1.0 is found
-while (population.get_schedules()[0].get_fitness() != 1.0):
-    generationNumber += 1
-    print("\n> Generation # " + str(generationNumber))
-    population = algorithm.evolve(population)
-    population.get_schedules().sort(key=lambda x: x.get_fitness(), reverse=True)
-    displayMgr.print_generation(population)
-    displayMgr.print_schedule_as_table(population.get_schedules()[0])
-print("\n\n")"""
-
+db = Data_Base()
+handle_command_line(VERBOSE_FLAG)
 # used for profiling
 h.heap()

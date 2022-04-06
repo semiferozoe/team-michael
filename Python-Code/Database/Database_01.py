@@ -11,13 +11,13 @@ c= connect.cursor()
 
 # Create another database with more information and increased amount of scenerios later.
 c.execute("""create table room (number text, cpacity integer)""")
-c.execute("insert into room Values ('Cott 111', 01),"
-                                  "('Cott 115', 02),"
-                                  "('JoeJ 211', 03),"
-                                  "('JoeJ 226', 04),"
-                                  "('BobB 314', 05),"
-                                  "('BobB 330', 06),"
-                                  "('BobB 335', 07),")
+c.execute("insert into room Values ('Cott 111', 25),"
+                                  "('Cott 115', 50),"
+                                  "('JoeJ 211', 14),"
+                                  "('JoeJ 226', 25),"
+                                  "('BobB 314', 30),"
+                                  "('BobB 330', 30),"
+                                  "('BobB 335', 30)")
 c.execute("""create table meeting_time (id text, time text)""")
 c.execute("insert into meeting_time Values ('MT1', 'MWF 08:00 - 9:15'),"
                                           "('MT2', 'MWF 8:00 - 9:50'),"
@@ -32,7 +32,7 @@ c.execute("""create table instructor (number text, name text)""")
 c.execute("insert into instructor Values ('I1', 'Dr. Songming Hou'),"
                                         "('I2', 'Dr. Kyle Prather'),"
                                         "('I3', 'Dr. Bruce Magee'),"
-                                        "('I4', 'Mr. Joel Stake')"
+                                        "('I4', 'Mr. Joel Stake'),"
                                         "('I5', 'Dr. Krystal Corbett')")
 c.execute("""create table instructor_availability (instructor_id text, meeting_time_id text)""")
 c.execute("insert into instructor_availability(instructor_id, meeting_time_id) values "
@@ -56,11 +56,11 @@ c.execute("insert into instructor_availability(instructor_id, meeting_time_id) v
                                                    "('I4', 'MT6'),"
                                                    "('I4', 'MT7'),"
                                                    "('I4', 'MT8'),"
-									    		   "('I4', 'MT9')"
-                                                   "('I5', 'MT1')"
-                                                   "('I5', 'MT3')"
-                                                   "('I5', 'MT5')"
-                                                   "('I5', 'MT7')"
+									    		   "('I4', 'MT9'),"
+                                                   "('I5', 'MT1'),"
+                                                   "('I5', 'MT3'),"
+                                                   "('I5', 'MT5'),"
+                                                   "('I5', 'MT7'),"
                                                    "('I5', 'MT9')")
 c.execute("""create table course_instructor (course_number text, instructor_number text)""")
 c.execute("insert into course_instructor Values ('C1', 'I2'),"
