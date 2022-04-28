@@ -434,6 +434,8 @@ class DisplayMgr:
                            classes[i].get_instructor().get_name() +" (" + str(classes[i].get_instructor().get_id()) +")",
                            classes[i].get_meetingTime().get_time() +" (" + str(classes[i].get_meetingTime().get_id()) +")"])
         print(table)
+        with open ('finaltable.txt', 'w') as w:
+            w.write(str(table))
     @staticmethod
     def display_schedule_meetingTimes(schedule):
         print("> from 'meeting time' perspective")
@@ -508,7 +510,7 @@ def find_fittest_schedule(verboseFlag):
     print("> solution found after " + str(generationNumber) + " generations")
     return population.get_schedules()[0]
 # first command line used to decide what mode and information you want to find.
-def handle_command_line(verboseFlag):
+"""def handle_command_line(verboseFlag):
     while (True):
         entry = input("> What do you want to do (i:nitial data display, f:ind fittest schedule, d:efault mode, v:erbose mode, e:xit)\n")
         if (entry == "i"): 
@@ -521,9 +523,13 @@ def handle_command_line(verboseFlag):
         elif (entry == "v"): 
             verboseFlag = True
         elif (entry == "e"):
-            break
-# displa command line used once fittest schedule is found
-def handle_schedule_display(schedule):
+            break"""
+def printfinal(verboseFlag):
+    schedule = find_fittest_schedule(verboseFlag)
+    DisplayMgr.display_schedule_as_table(schedule)
+
+# display command line used once fittest schedule is found
+"""def handle_schedule_display(schedule):
     while (True):
         entry = input("> What do you want to display (c:lass schedule, t:ime schedule, r:oom schedule, i:nstructor schedule, e:lse)\n")
         if (entry == "c"):
@@ -536,8 +542,9 @@ def handle_schedule_display(schedule):
         elif (entry == "i"): 
             DisplayMgr.display_schedule_instructors(schedule)
         elif (entry == "e"): 
-            break
+            break"""
 db = Data_Base()
-handle_command_line(VERBOSE_FLAG)
+printfinal(VERBOSE_FLAG)
+#handle_command_line(VERBOSE_FLAG)
 # used for profiling
 h.heap()

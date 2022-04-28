@@ -12,6 +12,18 @@ body, html {
     justify-content: center;
 }
 
+iframe{
+    background-color:aqua;
+    font: 20px "Lato", sans-serif;
+    align-items: center;
+    border-style: solid;
+    border-width: 3mm;
+    border-color: #000000;
+}
+#list{
+    text-align: center;
+}
+
 /* header stuffs */
 
 .header {
