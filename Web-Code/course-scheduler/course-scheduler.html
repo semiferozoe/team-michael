@@ -21,8 +21,22 @@
 				<a href="../logout.php">Log Out</a>
 			</div>
 		</div>
-
-		<div id="list"><p><iframe src="finaltable.txt" width=898 height=200 frameborder=0 ></iframe></p></div>
+		<input type="button" id='script' name="scriptbutton" value=" Run Script " onclick="goPython()">
+		<script>
+			function goPython(){
+				$.ajax({
+				  url: "ClassScheduling.py",
+				 context: document.body
+				}).done(function() {
+				 alert('finished python script');;
+				});
+			}
+		</script>
+		<button onclick="dispTXT()">output</button>
+		<p id="test"></p>
+		<script>
+			<div id="list"><p><iframe src="finaltable.txt" width=1000 height=200 frameborder=0 ></iframe></p></div>				
+		</script>
 
     </body>
 </html> 
