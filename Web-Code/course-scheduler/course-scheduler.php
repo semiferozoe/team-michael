@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<script src='jquery.js'> </script>
+		<script>
+			function ajaxPy(){
+				$.ajax('pythoncall.php', { success: function(){
+					$("#DisplayButt").html('<iframe style="display: block; margin: 0 auto" src="finaltable.txt" width=1000 height=200 frameborder=0 ></iframe>')
+				}})
+			}
+		</script>
 		<meta charset="utf-8">
 		<title>Course Scheduler</title>
 		<link rel="stylesheet" type="text/css" href="course-scheduler.css" />
@@ -21,22 +29,9 @@
 				<a href="../logout.php">Log Out</a>
 			</div>
 		</div>
-		<input type="button" id='script' name="scriptbutton" value=" Run Script " onclick="goPython()">
-		<script>
-			function goPython(){
-				$.ajax({
-				  url: "ClassScheduling.py",
-				 context: document.body
-				}).done(function() {
-				 alert('finished python script');;
-				});
-			}
-		</script>
-		<button onclick="dispTXT()">output</button>
-		<p id="test"></p>
-		<script>
-			<div id="list"><p><iframe src="finaltable.txt" width=1000 height=200 frameborder=0 ></iframe></p></div>				
-		</script>
 
+		<br>
+		<div style="width: 80%; margin: 0 auto; border:thin solid black" id="DisplayButt"></div>	
+		<input type='button' id='submitBtn' class='submitBtn' value='submit' onclick="ajaxPy()"></input>
     </body>
 </html> 

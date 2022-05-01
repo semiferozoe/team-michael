@@ -12,6 +12,16 @@ body, html {
     justify-content: center;
 }
 
+.submitBtn{
+    top: 11%;
+    left: 55%;
+    width: 100px;
+    height: 40px;
+    position: relative;
+    z-index: 2;
+    background-color: white;
+}
+
 iframe{
     background-color:aqua;
     font: 20px "Lato", sans-serif;
