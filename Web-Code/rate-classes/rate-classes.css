@@ -10,14 +10,12 @@ body, html {
 	margin: 0;
 }
 
-
-
 /* header stuffs */
 
 .header {
     overflow: hidden;
     background-color: lightgray;
-    opacity: 0.85;
+    opacity: 1;
     padding: 15px 10px;
 }
 
@@ -67,7 +65,7 @@ h2 {
 
 .container {
   	width: 500px;
-	height: 450px;
+	height: auto;
   	background-color: lightgray;
   	box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
 	border: 3px solid black;
@@ -75,19 +73,38 @@ h2 {
 }
 
 .course_name {
+	background-color: #899499;
+	border: 2px solid black;
+	width: 180px;
+	margin: auto;
+	padding: 10px;
 	text-align: center;
 	display: block;
-	margin: auto;
-	color: blue;
+	color: white;
 }
 
+option:disabled {
+	color: black;
+	font-weight: bold;
+}
 
 .btn {
+	background-color: #899499;
+	border: 2px solid black;
+	width: 175px;
+	transition-duration: 0.3s;
+	margin: auto;
+	padding: 10px;
 	text-align: center;
 	display: block;
-	margin: auto;
-	color: black;
+	color: white;
 }
+
+.btn:hover {
+	background-color: #d2202f;
+	color: white;
+}
+
 
 .rating {
 	margin: 0 auto;

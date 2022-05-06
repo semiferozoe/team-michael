@@ -1,0 +1,22 @@
+/*Styling for Show All Ratings Table */
+table {
+	width: 50%;
+	border-collapse: collapse;
+	border: 3px solid black;
+	margin-left: auto;
+	margin-right: auto;
+	box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
+}
+
+th {
+	background-color: #d2202f;
+	color: white;
+	border: 3px solid black;
+}
+
+tr {
+	background-color: lightgray;
+	color: black;
+	text-align: center;
+	border: 1px solid black;
+}
