@@ -2,7 +2,6 @@ body, html {
     height: 100%;
     margin: 0;
     font: 400 15px/1.8 "Lato", sans-serif;
-    color: red;
     scroll-behavior: smooth;
 }
 
@@ -17,7 +16,9 @@ body, html {
     background-size: 250px;
 }
 
-.bgimg-1, .bgimg-2 {
+.bgimg-1 {
+	background-image: url("../images/test1.jpg");
+    height: 75%;
     position: relative;
     opacity: 0.89;
     background-attachment: fixed;
@@ -32,18 +33,9 @@ body, html {
     min-height: 600px;
 }
 
-
-.bgimg-1 {
-    background-image: url("../images/test1.jpg");
-    min-height: 580px;
-    }
-	
-
-.bgimg-2 {
-    background-image: url("../images/campus.jpg");
-    min-height: 500px;
+.footer {
+	height: auto;
 }
-
 .caption {
     position: absolute;
     left: 0;
@@ -80,14 +72,13 @@ h3 {
 .header {
     overflow: hidden;
     background-color: lightgray;
-    opacity: 0.85;
+    opacity: 1;
     padding: 15px 10px;
 }
 
 .header a {
     float: left;
     color: black;
-    text-align: center;
     padding: 20px;
     text-decoration: none;
     font-size: 18px; 

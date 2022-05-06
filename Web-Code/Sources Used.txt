@@ -1,0 +1,6 @@
+Here is a list of all sources/helpful forums used to help create/inspire features of the Course Scheduler website:
+
+Login System - https://www.tutorialrepublic.com/php-tutorial/php-mysql-login-system.php
+Navigation Bar - https://www.w3schools.com/howto/howto_js_topnav_responsive.asp
+Helpful MySQL Commands - https://medium.com/@mandeepkaur1/a-list-of-mysql-commands-c4d0d244aa5cS
+Connecting PHP scripts to MySQL - https://www.w3schools.com/php/php_mysql_connect.asp

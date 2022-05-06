@@ -3,32 +3,46 @@ body, html {
     height: 100%;
     width: 100%;
     margin: 0;
-    font: 400 15px/1.8 "Lato", sans-serif;
-    background-color:#d2202f;
+    background-image: url(../images/campus.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
     color: black;
-    scroll-behavior: smooth;   
+    scroll-behavior: smooth;
     font: 20px "Lato", sans-serif;
     align-items: center;
     justify-content: center;
 }
 
+h3 {
+	text-align: center;
+	color: black;
+	text-decoration: underline;
+}
+
+.container {
+  	width: 1150px;
+	height: 450px;
+  	background-color: lightgray;
+  	box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
+	border: 3px solid black;
+  	margin: 40px auto;
+
+}
+
 .submitBtn{
-    top: 11%;
-    left: 55%;
     width: 100px;
     height: 40px;
-    position: relative;
-    z-index: 2;
     background-color: white;
+	text-align: center;
+	display: block;
+	margin: auto;
+	color: black;
 }
 
 iframe{
-    background-color:aqua;
-    font: 20px "Lato", sans-serif;
-    align-items: center;
-    border-style: solid;
-    border-width: 3mm;
-    border-color: #000000;
+    background-color:white;
+	border: 1px solid black;
 }
 #list{
     text-align: center;
@@ -39,7 +53,7 @@ iframe{
 .header {
     overflow: hidden;
     background-color: lightgray;
-    opacity: 0.85;
+    opacity: 1;
     padding: 15px 10px;
 }
 

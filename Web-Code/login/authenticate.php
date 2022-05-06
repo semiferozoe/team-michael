@@ -1,7 +1,7 @@
 <?php
 session_start();
 // Change this to your connection info.
-$DATABASE_HOST = 'poffenroth.iad1-mysql-e2-1a.dreamhost.com';
+$DATABASE_HOST = 'brahney.iad1-mysql-e2-7a.dreamhost.com';
 $DATABASE_USER = 'kota';
 $DATABASE_PASS = 'capstone406';
 $DATABASE_NAME = 'coursescheduler_users';
@@ -10,13 +10,13 @@ $DATABASE_NAME = 'coursescheduler_users';
 $con = mysqli_connect($DATABASE_HOST, $DATABASE_USER, $DATABASE_PASS, $DATABASE_NAME);
 if ( mysqli_connect_errno() ) {
 	// If there is an error with the connection, stop the script and display the error.
-	exit('Failed to connect to MySQL: ' . mysqli_connect_error());
+	echo "<script>alert('Failed to Connect to MySQL!');document.location='index.html'</script>";
 }
 
 // Now we check if the data from the login form was submitted, isset() will check if the data exists.
 if ( !isset($_POST['username'], $_POST['password']) ) {
 	// Could not get the data that should have been sent.
-	exit('Please fill both the username and password fields!');
+	echo "<script>alert('Please complete the form!');document.location='index.html'</script>";
 }
 
 // Prepare our SQL, preparing the SQL statement will prevent SQL injection.
@@ -39,14 +39,14 @@ if ($stmt->num_rows > 0) {
 		$_SESSION['loggedin'] = TRUE;
 		$_SESSION['name'] = $_POST['username'];
 		$_SESSION['id'] = $id;
-		header('Location: ../homepage/homepage.html');
+		header('Location: ../homepage/homepage.php');
 	} else {
 		// Incorrect password
-		echo 'Incorrect username and/or password!';
+		echo "<script>alert('Incorrect Username and/or Password!');document.location='index.html'</script>";
 	}
 } else {
 	// Incorrect username
-	echo 'Incorrect username and/or password!';
+	echo "<script>alert('Incorrect Username and/or Password!');document.location='index.html'</script>";
 }
 
 
